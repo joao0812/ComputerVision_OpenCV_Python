@@ -345,6 +345,16 @@ def filtroLapraceEdgeDetection(img):
     cv2.imshow('Filtro Laplaciano', res)
     cv2.waitKey(0)
 
+def EdgeDetectionCanny(img):
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    suave = cv2.GaussianBlur(img_gray, (7, 7), 0)
+    canny1 = cv2.Canny(suave, 20, 120)
+    canny2 = cv2.Canny(suave, 70, 200)
+    resultado = np.vstack([np.hstack([img_gray, suave ]),np.hstack([canny1, canny2])]) 
+    cv2.imshow("Detector de Bordas Canny", resultado)
+    cv2.waitKey(0)
+
+
 def main():
     image_color = cv2.imread('assets/onePiece.jpg')
     sudoku = cv2.imread('assets/sudoku.PNG', cv2.COLOR_BGR2GRAY)
@@ -390,6 +400,8 @@ def main():
 
     # SodalEdgeDetection(sudoku)
 
-    filtroLapraceEdgeDetection(road)
+    # filtroLapraceEdgeDetection(road)
+
+    EdgeDetectionCanny(road)
 
 main()
