@@ -24,7 +24,6 @@ def manipulandoPixelColor(image_color):
     cv2.imshow('Image drawed', image_color_3)
     cv2.waitKey()
 
-
 def drawGeometricFormsText(image_color):
     vermelho = (0, 0, 255)
     verde = (0, 255, 0)
@@ -50,7 +49,6 @@ def drawGeometricFormsText(image_color):
     cv2.imshow('Drawed image', image_color_1)
     cv2.waitKey()
 
-
 def shadowFilterImage(image_color):
     image_color_1 = copy(image_color)
     for y in range(0, image_color_1.shape[0]):
@@ -58,7 +56,6 @@ def shadowFilterImage(image_color):
             image_color_1[y, x] = image_color_1[y, x] // 5
     cv2.imshow("Blur", image_color_1)
     cv2.waitKey()
-
 
 def cropResizeImage(image_color):
     image_color_1 = copy(image_color)
@@ -73,14 +70,12 @@ def cropResizeImage(image_color):
     cv2.imshow("Cropped image", crop)
     cv2.waitKey()
 
-
 def flipImage(image_color):
     image_color_flip = copy(image_color)
     image_color_flip = cv2.flip(image_color, -1)
     cv2.imshow("Flipped image", image_color_flip)
     cv2.imshow("Source image", image_color)
     cv2.waitKey(0)
-
 
 def rotateImage(image_color):
     img_height = image_color.shape[0]  # get height and width
@@ -96,7 +91,6 @@ def rotateImage(image_color):
     cv2.imshow("Rotated Image", image_color_rotate)
 
     cv2.waitKey(0)
-
 
 def makeMask(image_color):
     mask = np.zeros(image_color.shape[:2], dtype="uint8")
@@ -352,10 +346,10 @@ def filtroLapraceEdgeDetection(img):
     cv2.waitKey(0)
 
 def main():
-    image_color = cv2.imread('ComputerVision_Study_InPython/ShowImage/assets/onePiece.jpg')
-    sudoku = cv2.imread('omputerVision_Study_InPython/ShowImage/assets/sudoku.PNG', cv2.COLOR_BGR2GRAY)
-    river = cv2.imread('omputerVision_Study_InPython/ShowImage/assets/river.jpg')
-    road = cv2.imread('ComputerVision_Study_InPython/ShowImage/assets/road.jpg') 
+    image_color = cv2.imread('assets/onePiece.jpg')
+    sudoku = cv2.imread('assets/sudoku.PNG', cv2.COLOR_BGR2GRAY)
+    river = cv2.imread('assets/river.jpg')
+    road = cv2.imread('assets/road.jpg') 
     # cv2.imshow('Source Image', image_color)
 
     print(image_color.shape)
