@@ -388,6 +388,14 @@ def escreve(img, texto, cor=(255, 0, 0)):
     fonte = cv2.FONT_HERSHEY_SIMPLEX
     cv2.putText(img, texto, (10, 20), fonte, 0.5, cor, 0, cv2.LINE_AA)
 
+def cropMetadeImage(img):
+    X_center = img.shape[1]//2
+    Y_center = img.shape[0]//2
+    Y_center_media = Y_center//2
+    X_center_media = X_center//2
+
+    img = img[Y_center-Y_center_media:Y_center+Y_center_media, X_center-X_center_media:X_center+X_center_media]
+    return img
 
 def identifyAndCountObjects(img):
     # Passo 1: Conversão para tons de cinza
@@ -401,7 +409,7 @@ def identifyAndCountObjects(img):
     print(thres)
     bin = img_blur.copy()
     # thres vai no lugar de 245, mas usei esse valor para achar somente os 6 dados da imagem e n seus valores também
-    bin[bin > 245] = 255
+    bin[bin > 55] = 255
     bin[bin < 255] = 0
     bin = cv2.bitwise_not(bin)
 
@@ -410,7 +418,7 @@ def identifyAndCountObjects(img):
 
     # Passo 5: Identificação e contagem dos contornos da imagem
     # cv2.RETR_EXTERNAL = conta apenas os contornos externos
-    contours, objetos = cv2.findContours(
+    contours, hierarchy = cv2.findContours(
         edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # A variável lx (lixo) recebe dados que não são utilizados
 
@@ -423,7 +431,7 @@ def identifyAndCountObjects(img):
     # offset (opcional): Um deslocamento a ser adicionado a todos os pontos dos contornos.
 
     print(len(contours))
-    print(len(objetos))
+    print(len(hierarchy))
 
     escreve(img_gray, "Imagem em tons de cinza", 0)
     escreve(img_blur, "Suavizacao com Blur", 0)
@@ -437,7 +445,7 @@ def identifyAndCountObjects(img):
     imgC2 = img.copy()
     cv2.imshow("Imagem Original", img)
     cv2.drawContours(imgC2, contours, -1, (255, 0, 0), 2)
-    escreve(imgC2, str(len(contours))+" objetos encontrados!")
+    escreve(imgC2,"Valor total: "+ str(len(contours))+" Pontos")
     cv2.imshow("Resultado", imgC2)
     cv2.waitKey(0)
 
@@ -459,8 +467,21 @@ def main():
     river = cv2.imread('assets/river.jpg')
     road = cv2.imread('assets/road.jpg')
     dices = cv2.imread('assets/dices.jpg')
+    dados1 = cv2.imread('assets/dados1.jpg')
+    dados2 = cv2.imread('assets/dados2.jpg')
+    dados3 = cv2.imread('assets/dados3.jpg')
     dados6 = cv2.imread('assets/dados6.jpeg')
-    # cv2.imshow('Source Image', image_color)
+    jogoLetras = cv2.imread('assets/jogoLetras.jpg')
+    checkers = cv2.imread('assets/checkers.jpg')
+    
+
+    #dados2 = dados2[::2, ::2]
+    img = cropMetadeImage(dados2)
+    #img = dados2
+    
+
+    cv2.imshow('Source Image', img)
+    cv2.waitKey(0)
 
     print(image_color.shape)
     print('--'*30)
@@ -504,7 +525,7 @@ def main():
 
     # EdgeDetectionCanny(road)
 
-    identifyAndCountObjects(dados6)
+    identifyAndCountObjects(img)
 
 
 main()
