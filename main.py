@@ -397,29 +397,52 @@ def cropMetadeImage(img):
     img = img[Y_center-Y_center_media:Y_center+Y_center_media, X_center-X_center_media:X_center+X_center_media]
     return img
 
-def identifyAndCountObjects(img):
+def identifyAndCountObjects(img1, img2, img3):
     # Passo 1: Conversão para tons de cinza
-    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img_gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    img_gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    img_gray3 = cv2.cvtColor(img3, cv2.COLOR_BGR2GRAY)
 
     # Passo 2: Blur/Suavização da imagem
-    img_blur = cv2.blur(img_gray, (5, 5))
+    img_blur1 = cv2.blur(img_gray1, (5, 5))
+    img_blur2 = cv2.blur(img_gray2, (5, 5))
+    img_blur3 = cv2.blur(img_gray3, (5, 5))
 
     # Passo 3: Binarização resultando em pixels brancos e pretos
-    thres = mahotas.thresholding.otsu(img_blur)
-    print(thres)
-    bin = img_blur.copy()
+    thres1 = mahotas.thresholding.otsu(img_blur1)
+    thres2 = mahotas.thresholding.otsu(img_blur2)
+    thres3 = mahotas.thresholding.otsu(img_blur3)
+    print(('-'*20)+"Thresholding"+('-'*20))
+    print(thres1)
+    print(thres2)
+    print(thres3)
+    bin1 = img_blur1.copy()
+    bin2 = img_blur2.copy()
+    bin3 = img_blur3.copy()
     # thres vai no lugar de 245, mas usei esse valor para achar somente os 6 dados da imagem e n seus valores também
-    bin[bin > 55] = 255
-    bin[bin < 255] = 0
-    bin = cv2.bitwise_not(bin)
+    bin1[bin1 > 55] = 255
+    bin1[bin1 < 255] = 0
+    bin2[bin2 > 55] = 255
+    bin2[bin2 < 255] = 0
+    bin3[bin3 > 55] = 255
+    bin3[bin3 < 255] = 0
+    bin1 = cv2.bitwise_not(bin1)
+    bin2 = cv2.bitwise_not(bin2)
+    bin3 = cv2.bitwise_not(bin3)
 
     # Passo 4: Detecção de bordas com Canny
-    edges = cv2.Canny(bin, 70, 150)
+    edges1 = cv2.Canny(bin1, 70, 150)
+    edges2 = cv2.Canny(bin2, 70, 150)
+    edges3 = cv2.Canny(bin3, 70, 150)
 
     # Passo 5: Identificação e contagem dos contornos da imagem
     # cv2.RETR_EXTERNAL = conta apenas os contornos externos
-    contours, hierarchy = cv2.findContours(
-        edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours1, hierarchy1 = cv2.findContours(
+        edges1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours2, hierarchy2 = cv2.findContours(
+        edges2.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours3, hierarchy3 = cv2.findContours(
+        edges3.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # A variável lx (lixo) recebe dados que não são utilizados
 
     # FINDCONTOURS -> É usada no OpenCV para encontrar os contornos em uma imagem.
@@ -429,24 +452,62 @@ def identifyAndCountObjects(img):
     # contours: Uma lista vazia (ou None) que será preenchida com os contornos encontrados. Cada contorno é representado por um array NumPy.
     # hierarchy: Uma matriz (opcional) para armazenar a hierarquia dos contornos. É usado para representar a relação de aninhamento e ordem entre os contornos.
     # offset (opcional): Um deslocamento a ser adicionado a todos os pontos dos contornos.
+    print('Countours 1')
+    print(len(contours1))
+    print(len(hierarchy1))
+    print('Countours 2')
+    print(len(contours2))
+    print(len(hierarchy2))
+    print('Countours 3')
+    print(len(contours3))
+    print(len(hierarchy3))
 
-    print(len(contours))
-    print(len(hierarchy))
+    escreve(img_gray1, "Imagem 1 em tons de cinza", 0)
+    escreve(img_blur1, "Suavizacao da img 1 com Blur", 0)
+    escreve(bin1, "Binarizacao da img 1 com Metodo Otsu", 255)
+    escreve(edges1, "Detector de bordas Canny na img 1", 255)
 
-    escreve(img_gray, "Imagem em tons de cinza", 0)
-    escreve(img_blur, "Suavizacao com Blur", 0)
-    escreve(bin, "Binarizacao com Metodo Otsu", 255)
-    escreve(edges, "Detector de bordas Canny", 255)
-    temp = np.vstack(
-        [np.hstack([img_gray, img_blur]), np.hstack([bin, edges])])
-    cv2.imshow(f"Quantidade de objetos: {str(len(contours))}", temp)
-    cv2.waitKey(0)
+    escreve(img_gray2, "Imagem 2 em tons de cinza", 0)
+    escreve(img_blur2, "Suavizacao da img 2 com Blur", 0)
+    escreve(bin2, "Binarizacao da img 2 com Metodo Otsu", 255)
+    escreve(edges2, "Detector de bordas Canny na img 2", 255)
 
-    imgC2 = img.copy()
-    cv2.imshow("Imagem Original", img)
-    cv2.drawContours(imgC2, contours, -1, (255, 0, 0), 2)
-    escreve(imgC2,"Valor total: "+ str(len(contours))+" Pontos")
-    cv2.imshow("Resultado", imgC2)
+    escreve(img_gray3, "Imagem 3 em tons de cinza", 0)
+    escreve(img_blur3, "Suavizacao da img 3 com Blur", 0)
+    escreve(bin3, "Binarizacao da img 3 com Metodo Otsu", 255)
+    escreve(edges3, "Detector de bordas Canny na img 3", 255)
+
+    temp1 = np.vstack(
+        [np.hstack([img_gray1, img_blur1]), np.hstack([bin1, edges1])])
+    temp2 = np.vstack(
+        [np.hstack([img_gray2, img_blur2]), np.hstack([bin2, edges2])])
+    temp3 = np.vstack(
+        [np.hstack([img_gray3, img_blur3]), np.hstack([bin3, edges3])])
+
+    imgC2_1 = img1.copy()
+    cv2.imshow("Imagem 1 Original", img1)
+    cv2.drawContours(imgC2_1, contours1, -1, (255, 0, 0), 2)
+    escreve(imgC2_1,"Valor total: "+ str(len(contours1))+" Pontos")
+    imgC2_2 = img2.copy()
+    cv2.imshow("Imagem 2 Original", img2)
+    cv2.drawContours(imgC2_2, contours2, -1, (255, 0, 0), 2)
+    escreve(imgC2_2,"Valor total: "+ str(len(contours2))+" Pontos")
+    imgC2_3 = img3.copy()
+    cv2.imshow("Imagem 3 Original", img3)
+    cv2.drawContours(imgC2_3, contours3, -1, (255, 0, 0), 2)
+    escreve(imgC2_3,"Valor total: "+ str(len(contours3))+" Pontos")
+
+    # Baixando imagens 
+    cv2.imwrite('results/imagemTotalPontos1.jpg', imgC2_1)
+    cv2.imwrite('results/imagemTotalPontos2.jpg', imgC2_2)
+    cv2.imwrite('results/imagemTotalPontos3.jpg', imgC2_3)
+
+    cv2.imshow(f"IMG 1 - Quantidade de objetos: {str(len(contours1))}", temp1)
+    cv2.imshow("Resultado IMG 1", imgC2_1)
+    cv2.imshow(f"IMG 2 - Quantidade de objetos: {str(len(contours2))}", temp2)
+    cv2.imshow("Resultado IMG 2", imgC2_2)
+    cv2.imshow(f"IMG 3 - Quantidade de objetos: {str(len(contours3))}", temp3)
+    cv2.imshow("Resultado IMG 3", imgC2_3)
     cv2.waitKey(0)
 
     # DRAWCONTOURS -> É usada no OpenCV para desenhar contornos em uma imagem.
@@ -476,12 +537,13 @@ def main():
     
 
     #dados2 = dados2[::2, ::2]
-    img = cropMetadeImage(dados2)
-    #img = dados2
+    img1 = dados1
+    img2 = cropMetadeImage(dados2)
+    img3 = dados3
     
 
-    cv2.imshow('Source Image', img)
-    cv2.waitKey(0)
+    #cv2.imshow('Source Image', img)
+    #cv2.waitKey(0)
 
     print(image_color.shape)
     print('--'*30)
@@ -525,7 +587,7 @@ def main():
 
     # EdgeDetectionCanny(road)
 
-    identifyAndCountObjects(img)
+    identifyAndCountObjects(img1, img2, img3)
 
 
 main()
