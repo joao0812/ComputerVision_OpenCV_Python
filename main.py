@@ -498,9 +498,9 @@ def identifyAndCountObjects(img1, img2, img3):
     escreve(imgC2_3,"Valor total: "+ str(len(contours3))+" Pontos")
 
     # Baixando imagens 
-    cv2.imwrite('results/imagemTotalPontos1.jpg', imgC2_1)
-    cv2.imwrite('results/imagemTotalPontos2.jpg', imgC2_2)
-    cv2.imwrite('results/imagemTotalPontos3.jpg', imgC2_3)
+    #cv2.imwrite('results/imagemTotalPontos1.jpg', imgC2_1)
+    #cv2.imwrite('results/imagemTotalPontos2.jpg', imgC2_2)
+    #cv2.imwrite('results/imagemTotalPontos3.jpg', imgC2_3)
 
     cv2.imshow(f"IMG 1 - Quantidade de objetos: {str(len(contours1))}", temp1)
     cv2.imshow("Resultado IMG 1", imgC2_1)
@@ -521,6 +521,82 @@ def identifyAndCountObjects(img1, img2, img3):
     # maxLevel (opcional): O nível máximo da hierarquia a ser desenhado.
     # offset (opcional): Um deslocamento a ser aplicado a todos os pontos dos contornos.
 
+def faceIdentificationIMG(img):
+    #Converte para tons de cinza
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    #Criação do detector de faces
+    #A OpenCV já possui o algoritmo pronto para detecção de Haar-like features, contudo, precisamos dos arquivo XML que é a fonte dos padrões para identificação dos objetos
+    df = cv2.CascadeClassifier('xml/haarcascade_frontalface_alt.xml')
+
+    #Executa a detecção
+    faces = df.detectMultiScale(img_gray,
+    scaleFactor = 1.05, minNeighbors = 7,
+    minSize = (30,30), flags = cv2.CASCADE_SCALE_IMAGE)
+
+    # A função detectMultiScale() é usada no OpenCV para realizar a detecção de objetos em uma imagem usando o algoritmo de Haar Cascade ou LBP (Local Binary Patterns). Essa função é comumente usada para detecção de faces, mas também pode ser aplicada a outras formas de detecção de objetos.
+
+    # objects = cv2.detectMultiScale(image, scaleFactor, minNeighbors, flags, minSize, maxSize)
+    # image: A imagem onde a detecção será realizada. Deve ser uma matriz NumPy (por exemplo, uma imagem carregada com cv2.imread()).
+    # scaleFactor: O fator de escala usado para criar uma pirâmide de imagens em diferentes tamanhos. Esse fator especifica o quanto a imagem é reduzida a cada escala. Por exemplo, um valor de 1.1 significa uma redução de 10% em cada escala.
+    # minNeighbors: O número mínimo de vizinhos que um objeto candidato deve ter para ser retido. Esse parâmetro afeta a qualidade e a precisão da detecção. Valores mais altos resultam em menos detecções falsas, mas também podem levar à perda de detecções verdadeiras.
+    # flags: Parâmetros opcionais adicionais. Geralmente, é definido como cv2.CASCADE_SCALE_IMAGE.
+    # minSize (opcional): O tamanho mínimo do objeto a ser detectado. Pode ser uma tupla (width, height) especificando a largura e altura mínimas.
+    # maxSize (opcional): O tamanho máximo do objeto a ser detectado. Pode ser uma tupla (width, height) especificando a largura e altura máximas.
+
+    #Desenha retangulos amarelos na iamgem original (colorida)
+    for (x, y, w, h) in faces:
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 255), 7)
+
+    # Salvando Imagem
+    cv2.imwrite('results/imagemFaceDetectionGroup.jpg', img)
+
+    #Exibe imagem. Título da janela exibe número de faces
+    cv2.imshow(str(len(faces))+' face(s) encontrada(s).', img)
+    cv2.waitKey(0)
+
+
+def faceIdentificationWebCam():
+    webCam = cv2.VideoCapture(0) # cv2.VideoCapture(0), onde 0 representa o índice da webcam
+
+    while True:
+        #Converte para tons de cinza
+        ret, frame = webCam.read()
+        print(ret)
+        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        #Criação do detector de faces
+        #A OpenCV já possui o algoritmo pronto para detecção de Haar-like features, contudo, precisamos dos arquivo XML que é a fonte dos padrões para identificação dos objetos
+        #df = cv2.CascadeClassifier('xml/haarcascade_frontalcatface.xml')
+        df = cv2.CascadeClassifier('xml/haarcascade_frontalface_alt.xml')
+
+        #Executa a detecção
+        faces = df.detectMultiScale(frame_gray,
+        scaleFactor = 1.05, minNeighbors = 7,
+        minSize = (30,30), flags = cv2.CASCADE_SCALE_IMAGE)
+
+        # A função detectMultiScale() é usada no OpenCV para realizar a detecção de objetos em uma imagem usando o algoritmo de Haar Cascade ou LBP (Local Binary Patterns). Essa função é comumente usada para detecção de faces, mas também pode ser aplicada a outras formas de detecção de objetos.
+
+        # objects = cv2.detectMultiScale(image, scaleFactor, minNeighbors, flags, minSize, maxSize)
+        # image: A imagem onde a detecção será realizada. Deve ser uma matriz NumPy (por exemplo, uma imagem carregada com cv2.imread()).
+        # scaleFactor: O fator de escala usado para criar uma pirâmide de imagens em diferentes tamanhos. Esse fator especifica o quanto a imagem é reduzida a cada escala. Por exemplo, um valor de 1.105 significa uma redução de 5% em cada escala.
+        # minNeighbors: O número mínimo de vizinhos que um objeto candidato deve ter para ser retido. Esse parâmetro afeta a qualidade e a precisão da detecção. Valores mais altos resultam em menos detecções falsas, mas também podem levar à perda de detecções verdadeiras.
+        # flags: Parâmetros opcionais adicionais. Geralmente, é definido como cv2.CASCADE_SCALE_IMAGE.
+        # minSize (opcional): O tamanho mínimo do objeto a ser detectado. Pode ser uma tupla (width, height) especificando a largura e altura mínimas.
+        # maxSize (opcional): O tamanho máximo do objeto a ser detectado. Pode ser uma tupla (width, height) especificando a largura e altura máximas.
+
+        #Desenha retangulos amarelos na iamgem original (colorida)
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 7)
+
+        #Exibe imagem. Título da janela exibe número de faces
+        cv2.imshow('WebCam', frame)
+        if(len(faces) != 0 ):
+            print(len(faces))
+            cv2.imshow('Face Encontrada', frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
 def main():
     image_color = cv2.imread('assets/onePiece.jpg')
@@ -534,9 +610,12 @@ def main():
     dados6 = cv2.imread('assets/dados6.jpeg')
     jogoLetras = cv2.imread('assets/jogoLetras.jpg')
     checkers = cv2.imread('assets/checkers.jpg')
+    face1 = cv2.imread('assets/face1.jpg')
+    peaples = cv2.imread('assets/peaples.jpg')
     
 
     #dados2 = dados2[::2, ::2]
+    img = peaples
     img1 = dados1
     img2 = cropMetadeImage(dados2)
     img3 = dados3
@@ -587,7 +666,11 @@ def main():
 
     # EdgeDetectionCanny(road)
 
-    identifyAndCountObjects(img1, img2, img3)
+    # identifyAndCountObjects(img1, img2, img3)
+
+    # faceIdentificationIMG(img)
+
+    faceIdentificationWebCam()
 
 
 main()
