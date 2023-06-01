@@ -524,15 +524,20 @@ def identifyAndCountObjects(img1, img2, img3):
 def faceIdentificationIMG(img):
     #Converte para tons de cinza
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    
 
     #Criação do detector de faces
     #A OpenCV já possui o algoritmo pronto para detecção de Haar-like features, contudo, precisamos dos arquivo XML que é a fonte dos padrões para identificação dos objetos
+    #df = cv2.CascadeClassifier('xml/haarcascade_frontalcatface.xml')
     df = cv2.CascadeClassifier('xml/haarcascade_frontalface_alt.xml')
+    #df = cv2.CascadeClassifier('xml/haarcascade_fullbody.xml')
+    #df = cv2.CascadeClassifier('xml/haarcascade_lowerbody.xml')
 
     #Executa a detecção
     faces = df.detectMultiScale(img_gray,
     scaleFactor = 1.05, minNeighbors = 7,
     minSize = (30,30), flags = cv2.CASCADE_SCALE_IMAGE)
+    humans =  df.detectMultiScale(img_gray, 1.9, 1)
 
     # A função detectMultiScale() é usada no OpenCV para realizar a detecção de objetos em uma imagem usando o algoritmo de Haar Cascade ou LBP (Local Binary Patterns). Essa função é comumente usada para detecção de faces, mas também pode ser aplicada a outras formas de detecção de objetos.
 
@@ -558,6 +563,8 @@ def faceIdentificationIMG(img):
 
 def faceIdentificationWebCam():
     webCam = cv2.VideoCapture(0) # cv2.VideoCapture(0), onde 0 representa o índice da webcam
+    #webCam = cv2.VideoCapture('assets/pedestrian.mp4')
+    #webCam = cv2.VideoCapture('assets/industriWork.mp4')
 
     while True:
         #Converte para tons de cinza
@@ -568,7 +575,10 @@ def faceIdentificationWebCam():
         #Criação do detector de faces
         #A OpenCV já possui o algoritmo pronto para detecção de Haar-like features, contudo, precisamos dos arquivo XML que é a fonte dos padrões para identificação dos objetos
         #df = cv2.CascadeClassifier('xml/haarcascade_frontalcatface.xml')
-        df = cv2.CascadeClassifier('xml/haarcascade_frontalface_alt.xml')
+        #df = cv2.CascadeClassifier('xml/haarcascade_frontalface_alt.xml')
+        df = cv2.CascadeClassifier('xml/haarcascade_fullbody.xml')
+        #df = cv2.CascadeClassifier('xml/haarcascade_lowerbody.xml')
+        
 
         #Executa a detecção
         faces = df.detectMultiScale(frame_gray,
@@ -590,7 +600,8 @@ def faceIdentificationWebCam():
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 7)
 
         #Exibe imagem. Título da janela exibe número de faces
-        cv2.imshow('WebCam', frame)
+        escreve(frame, f'{len(faces)} Pessoas Encontradas', 0)
+        cv2.imshow(f'WebCam', frame)
         if(len(faces) != 0 ):
             print(len(faces))
             cv2.imshow('Face Encontrada', frame)
@@ -611,11 +622,11 @@ def main():
     jogoLetras = cv2.imread('assets/jogoLetras.jpg')
     checkers = cv2.imread('assets/checkers.jpg')
     face1 = cv2.imread('assets/face1.jpg')
-    peaples = cv2.imread('assets/peaples.jpg')
-    
+    peoples = cv2.imread('assets/peaples.jpg')
+    grupo_amigos_capao = cv2.imread('assets/grupo_amigos_capao.jpg')
 
     #dados2 = dados2[::2, ::2]
-    img = peaples
+    img = peoples
     img1 = dados1
     img2 = cropMetadeImage(dados2)
     img3 = dados3
